@@ -45,9 +45,9 @@
 {
 	var animation = [[CPViewAnimation alloc] initWithViewAnimations:[
 		[CPDictionary dictionaryWithJSObject:{
-			CPViewAnimationTarget:_view, 
-			CPViewAnimationStartFrame:_viewFrame,
-			CPViewAnimationEndFrame:aFrame
+			CPViewAnimationTargetKey:_view, 
+			CPViewAnimationStartFrameKey:_viewFrame,
+			CPViewAnimationEndFrameKey:aFrame
 		}]
 	]];
 	[animation setAnimationCurve:CPAnimationLinear];
