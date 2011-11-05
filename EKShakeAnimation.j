@@ -1,59 +1,69 @@
 @implementation EKShakeAnimation : CPObject
 {
-	id		_view;
-	int		_currentStep;
-	int		_delta;
-	CGRect		_viewFrame;
-	int		_steps;
-	float		_stepDuration;
-	CPTimer 	_timer;
+    id      target;
+    int     currentStep;
+    int     delta;
+    CG      targetFrame;
+    int     steps;
+    float   stepDuration;
+    CPTimer timer;
 }
 
 - (id)initWithView:(id)aView
 {
-	self = [super init];
-	if(self) {
-		_view = aView;
-		_currentStep = 1;
-		_delta = 7;
-		_viewFrame = [aView frame];
-		_steps = 5;
-		_stepDuration = 0.07;
-		_timer = [CPTimer scheduledTimerWithTimeInterval:_stepDuration target:self selector:@selector(timerDidFire) userInfo:nil repeats:YES];
-		[_timer fire];	
-	}
-	return self;
+    if(self = [super init])
+    {
+        target       = aView;
+        targetFrame  = [target frame];
+        currentStep  = 1;
+        delta        = 7;
+        steps        = 5;
+        stepDuration = 0.07;
+        timer        = [CPTimer scheduledTimerWithTimeInterval:stepDuration target:self selector:@selector(timerDidFire) userInfo:nil repeats:YES];
+        
+        [timer fire];    
+    }
+    
+    return self;
 }
 
 - (void)timerDidFire
 {
-	if (_currentStep == _steps) {
-		[_timer invalidate];
-		setTimeout(function() {
-			[self animateToFrame:_viewFrame];
-		}, _stepDuration);
-	} else {
-		var prefix = (_currentStep % 2 == 1) ? -1 : 1;
+    if (currentStep === steps)
+    {
+        [timer invalidate];
+        
+        setTimeout(function()
+        {
+            [self animateToFrame:targetFrame];
+        }, stepDuration);
+    }
+    else
+    {
+        var prefix = (currentStep % 2 === 1) ? -1 : 1;
 
-		[self animateToFrame:CGRectMake(_viewFrame.origin.x + _delta*prefix, _viewFrame.origin.y, _viewFrame.size.width, _viewFrame.size.height)];
+        [self animateToFrame:CGRectMake(targetFrame.origin.x + delta * prefix, 
+                                        targetFrame.origin.y,
+                                        targetFrame.size.width,
+                                        targetFrame.size.height)];
 
-		_currentStep++;
-	}
+        currentStep++;
+    }
 }
 
 - (void)animateToFrame:(CGRect)aFrame
 {
-	var animation = [[CPViewAnimation alloc] initWithViewAnimations:[
-		[CPDictionary dictionaryWithJSObject:{
-			CPViewAnimationTargetKey:_view, 
-			CPViewAnimationStartFrameKey:_viewFrame,
-			CPViewAnimationEndFrameKey:aFrame
-		}]
-	]];
-	[animation setAnimationCurve:CPAnimationLinear];
-	[animation setDuration:_stepDuration];
-	[animation startAnimation];
-	_viewFrame = aFrame;
+    var animation = [[CPViewAnimation alloc] initWithViewAnimations:[
+        [CPDictionary dictionaryWithJSObject:{
+            CPViewAnimationTargetKey:target, 
+            CPViewAnimationStartFrameKey:targetFrame,
+            CPViewAnimationEndFrameKey:aFrame
+        }]
+    ]];
+    [animation setAnimationCurve:CPAnimationLinear];
+    [animation setDuration:stepDuration];
+    [animation startAnimation];
+    targetFrame = aFrame;
 }
 
 @end
